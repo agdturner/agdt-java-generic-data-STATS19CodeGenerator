@@ -32,6 +32,7 @@ import uk.ac.leeds.ccg.data.core.Data_Environment;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.data.stats19.core.STATS19_Environment;
+import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 
 /**
@@ -59,9 +60,12 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
 
     public static void main(String[] args) {
         try {
+            Path dataDir = Paths.get(System.getProperty("user.home"),
+                    STATS19_Strings.s_data, STATS19_Strings.s_data,
+                    STATS19_Strings.s_STATS19);
             STATS19_Environment e = new STATS19_Environment(
                     new Data_Environment(new Generic_Environment(
-                    new Generic_Defaults())));
+                    new Generic_Defaults(dataDir))));
             STATS19_JavaCodeGenerator p = new STATS19_JavaCodeGenerator(e);
             p.run();
         } catch (Exception ex) {
