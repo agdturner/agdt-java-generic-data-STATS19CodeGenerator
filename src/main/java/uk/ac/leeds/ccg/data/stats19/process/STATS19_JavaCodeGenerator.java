@@ -32,6 +32,7 @@ import uk.ac.leeds.ccg.data.core.Data_Environment;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.data.stats19.core.STATS19_Environment;
+import uk.ac.leeds.ccg.data.stats19.core.STATS19_Object;
 import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 
@@ -47,15 +48,16 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_JavaCodeGenerator extends Data_VariableType {
+public class STATS19_JavaCodeGenerator extends STATS19_Object {
+    //Data_VariableType {
 
     private static final long serialVersionUID = 1L;
 
-    public STATS19_Environment e;
+    public STATS19_Environment env;
     
     public STATS19_JavaCodeGenerator(STATS19_Environment e) {
-        super(e.de);
-        this.e = e;
+        super(e);
+        this.env = e;
     }
 
     public static void main(String[] args) {
@@ -73,8 +75,11 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
         }
     }
 
+    Data_VariableType vt;
+    
     public void run() throws FileNotFoundException, IOException {
-        delimiter = ",";
+        vt = new Data_VariableType(env.de);
+        vt.setDelimiter(",");
         String type;
 
         /**
@@ -82,12 +87,12 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
          */
         int dp = 5;
 
-        Path indir = e.files.getInputDir();
+        Path indir = env.files.getInputDir();
         Path[] fs = new Path[2];
-        fs[0] = Paths.get(indir.toString(), "dftRoadSafetyData_Accidents_2017", "acc.csv");
-        fs[1] = Paths.get(indir.toString(), "dftRoadSafety_Accidents_2016", "dftRoadSafety_Accidents_2016.csv");
+        fs[0] = Paths.get(indir.toString(), "Accidents_2018.csv");
+        fs[1] = Paths.get(indir.toString(), "Accidents_2017.csv");
         //t = getFieldTypes(Integer.MAX_VALUE, fs, dp);
-        Data_VariableNamesAndTypes vnt = getFieldTypes(100, fs, dp, 1);
+        Data_VariableNamesAndTypes vnt = vt.getFieldTypes(100, fs, dp, 1);
         type = "accident";
         run(type, vnt);
 
@@ -117,7 +122,7 @@ public class STATS19_JavaCodeGenerator extends Data_VariableType {
             printClassDeclarationSerialVersionUID(pw, packageName, className, "", "");
             // Print Field Declarations Inits And Getters
             // initialise type2TypeName
-            type2TypeName = getType2TypeName();
+            HashMap<Integer, String> type2TypeName = vt.getType2TypeName();
             //vnt.fieldNames2Order;
             // Print field declaration
             Iterator<Integer> ite;
