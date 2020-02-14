@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
+import uk.ac.leeds.ccg.cg.process.CG_Process;
 import uk.ac.leeds.ccg.data.Data_VariableType;
 import uk.ac.leeds.ccg.data.Data_VariableType.Data_VariableNamesAndTypes;
 import uk.ac.leeds.ccg.data.core.Data_Environment;
@@ -48,16 +49,16 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_JavaCodeGenerator extends STATS19_Object {
-    //Data_VariableType {
-
-    private static final long serialVersionUID = 1L;
-
-    public STATS19_Environment env;
+public class STATS19_JavaCodeGenerator extends CG_Process {
     
+    public final STATS19_Environment se;
+    public final Data_Environment de;
+    public final Generic_Environment env;
+
     public STATS19_JavaCodeGenerator(STATS19_Environment e) {
-        super(e);
-        this.env = e;
+        se = e;
+        de = se.de;
+        env = se.env;
     }
 
     public static void main(String[] args) {
@@ -78,7 +79,7 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
     Data_VariableType vt;
     
     public void run() throws FileNotFoundException, IOException {
-        vt = new Data_VariableType(env.de);
+        vt = new Data_VariableType(de);
         vt.setDelimiter(",");
         String type;
 
@@ -134,6 +135,7 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
                 // print field declaration
                 pw.println("protected " + typeName + " " + field + ";");
             }
+            
             // Print inits
             ite = vnt.order2FieldNames.keySet().iterator();
             while (ite.hasNext()) {
@@ -159,6 +161,26 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
     /**
      *
      * @param pw
+     * @param className
+     * @param headers
+     * @param w
+     */
+    public void printConstructor(PrintWriter pw, String className, String[][] headers, int w) {
+        pw.println();
+        pw.println(getIndent(1) + "public " + className + "(STATS19_RecordID i, String line) throws Exception {");
+        pw.println(getIndent(2) + "super(i);");
+        pw.println(getIndent(2) + "s = line.split(\"\\t\");");
+        for (int j = 0; j < headers[w].length; j++) {
+            pw.println(getIndent(2) + "init" + headers[w][j] + "(s[" + j + "]);");
+        }
+        pw.println(getIndent(1) + "}");
+        //printGetID(pw);
+        pw.println("}");
+    }
+    
+    /**
+     *
+     * @param pw
      * @param packageName
      * @param imports
      */
@@ -179,7 +201,7 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
             }
         }
         if (hasBigDecimals) {
-            pw.println("import BigDecimal;");
+            pw.println("import java.math.BigDecimal;");
         }
         boolean hasBigIntegers = false;
         for (int i = 0; i < vnt.bigIntegers.length; i ++) {
@@ -189,7 +211,7 @@ public class STATS19_JavaCodeGenerator extends STATS19_Object {
             }
         }
         if (hasBigIntegers) {
-            pw.println("import BigInteger;");
+            pw.println("import java.math.BigInteger;");
         }
     }
 
