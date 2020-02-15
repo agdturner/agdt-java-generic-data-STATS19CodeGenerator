@@ -13,44 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.leeds.ccg.data.stats19.data;
+package uk.ac.leeds.ccg.data.stats19.data.id;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import uk.ac.leeds.ccg.data.id.Data_RecordID;
 
 /**
  *
  * @author Andy Turner
  * @version 1.0.0
  */
-public class STATS19_Collection implements Serializable {
+public class STATS19_RecordID extends Data_RecordID {
 
     private static final long serialVersionUID = 1L;
 
-    private final short ID;
-
-    /**
-     * The keys are CASEW1, the values are the respective combined record.
-     */
-    private final HashMap<Short, STATS19_Combined_Record> data;
-
-    public STATS19_Collection(short ID) {
-        this.ID = ID;
-        data = new HashMap<>();
-    }
-
-    /**
-     * @return the ID
-     */
-    public short getID() {
-        return ID;
-    }
-
-    /**
-     * @return the data
-     */
-    public HashMap<Short, STATS19_Combined_Record> getData() {
-        return data;
+    public STATS19_RecordID(long l) {
+        super(l);
     }
 
 }

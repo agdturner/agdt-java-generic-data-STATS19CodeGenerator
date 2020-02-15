@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import uk.ac.leeds.ccg.cg.process.CG_Process;
 import uk.ac.leeds.ccg.data.Data_VariableType;
@@ -45,7 +46,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
  * @version 1.0.0
  */
 public class STATS19_JavaCodeGenerator extends CG_Process {
-    
+
     public final STATS19_Environment se;
     public final Data_Environment de;
     public final Generic_Environment env;
@@ -63,7 +64,7 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
                     STATS19_Strings.s_STATS19);
             STATS19_Environment e = new STATS19_Environment(
                     new Data_Environment(new Generic_Environment(
-                    new Generic_Defaults(dataDir))));
+                            new Generic_Defaults(dataDir))));
             STATS19_JavaCodeGenerator p = new STATS19_JavaCodeGenerator(e);
             p.run();
         } catch (Exception ex) {
@@ -72,7 +73,7 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
     }
 
     Data_VariableType vt;
-    
+
     public void run() throws FileNotFoundException, IOException {
         vt = new Data_VariableType(de);
         vt.setDelimiter(",");
@@ -85,11 +86,11 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
          * Accident data
          */
         Path[] afs = new Path[nYears];
-        for (int year = startYear; year <= endYear; year ++) {
-            afs[year - startYear] = Paths.get(indir.toString(), "Accidents_" 
+        for (int year = startYear; year <= endYear; year++) {
+            afs[year - startYear] = Paths.get(indir.toString(), "Accidents_"
                     + Integer.toString(year) + ".csv");
         }
-        Data_VariableNamesAndTypes avnt = vt.getVariableNamesAndTypes(100, afs, 
+        Data_VariableNamesAndTypes avnt = vt.getVariableNamesAndTypes(100, afs,
                 dp, 1, "t");
         run("accident", avnt);
 
@@ -97,11 +98,11 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
          * Casualty data
          */
         Path[] cfs = new Path[nYears];
-        for (int year = startYear; year <= endYear; year ++) {
-            cfs[year - startYear] = Paths.get(indir.toString(), "Casualties_" 
+        for (int year = startYear; year <= endYear; year++) {
+            cfs[year - startYear] = Paths.get(indir.toString(), "Casualties_"
                     + Integer.toString(year) + ".csv");
         }
-        Data_VariableNamesAndTypes cvnt = vt.getVariableNamesAndTypes(100, cfs, 
+        Data_VariableNamesAndTypes cvnt = vt.getVariableNamesAndTypes(100, cfs,
                 dp, 1, "t");
         run("casualty", cvnt);
 
@@ -109,18 +110,18 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
          * Vehicle data
          */
         Path[] vfs = new Path[nYears];
-        for (int year = startYear; year <= endYear; year ++) {
-            vfs[year - startYear] = Paths.get(indir.toString(), "Vehicles_" 
+        for (int year = startYear; year <= endYear; year++) {
+            vfs[year - startYear] = Paths.get(indir.toString(), "Vehicles_"
                     + Integer.toString(year) + ".csv");
         }
-        Data_VariableNamesAndTypes vvnt = vt.getVariableNamesAndTypes(100, vfs, 
+        Data_VariableNamesAndTypes vvnt = vt.getVariableNamesAndTypes(100, vfs,
                 dp, 1, "t");
-        run("vehicle", vvnt);    
+        run("vehicle", vvnt);
     }
 
     public void run(String type, Data_VariableNamesAndTypes vnt) throws IOException {
-        Path outdir = Paths.get(System.getProperty("user.dir"), "src", "main"
-                , "java", "uk", "ac", "leeds", "ccg", "data", "stats19", "data");
+        Path outdir = Paths.get(System.getProperty("user.dir"), "src", "main",
+                 "java", "uk", "ac", "leeds", "ccg", "data", "stats19", "data");
         outdir = Paths.get(outdir.toString(), type);
         Files.createDirectories(outdir);
         String packageName = "uk.ac.leeds.ccg.data.stats19.data." + type;
@@ -128,52 +129,36 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
         type = type.toUpperCase();
         String className = prepend + "_" + type + "_Record";
         Path fout = Paths.get(outdir.toString(), className + ".java");
+        ArrayList<String> imports = new ArrayList<>();
+        imports.add("uk.ac.leeds.ccg.data.Data_Record");
+        imports.add("uk.ac.leeds.ccg.data.stats19.data.id.STATS19_RecordID");
         try (PrintWriter pw = Generic_IO.getPrintWriter(fout, false)) {
-            writeHeaderPackageAndImports(pw, packageName, null, vnt);
-            printClassDeclarationSerialVersionUID(pw, packageName, className, "", "");
+            writeHeaderPackageAndImports(pw, packageName, imports, vnt);
+            printClassDeclaration(pw, packageName, className, "", "Data_Record");
+            printSerialVersionUID(pw, 1);
             /**
              * Print Field Declarations Inits And Getters
              * ------------------------------------------
              */
-            /**
-             * Deal with the first field which for some reason has an extra
-             * characters at at the start of the field name. Deal with it be 
-             * removing this character
-             */
-            if (true) {
-                String field = vnt.order2FieldNames.get(0);
-                String newName = field.substring(0,1) + field.substring(2);
-                System.out.println(newName);
-                vnt.order2FieldNames.put(0, newName);
-                vnt.fieldNames2Order.put(newName, 0);
-            }
+//            /**
+//             * Deal with the first field which for some reason has an extra
+//             * characters at at the start of the field name. Deal with it be 
+//             * removing this character
+//             */
+//            if (true) {
+//                String field = vnt.order2FieldNames.get(0);
+//                String newName = field.substring(0,1) + field.substring(2);
+//                System.out.println(newName);
+//                vnt.order2FieldNames.put(0, newName);
+//                vnt.fieldNames2Order.put(newName, 0);
+//            }
             HashMap<Integer, String> type2TypeName = vt.getType2TypeName();
             printFieldDeclarations(pw, type2TypeName, vnt);
+            printConstructor(pw, className, prepend, vnt);
             printFieldInits(pw, vnt);
             printFieldGetters(pw, type2TypeName, vnt);
             pw.println("}");
         }
 
     }
-
-    /**
-     *
-     * @param pw
-     * @param className
-     * @param headers
-     * @param w
-     */
-    public void printConstructor(PrintWriter pw, String className, String[][] headers, int w) {
-        pw.println();
-        pw.println(getIndent(1) + "public " + className + "(STATS19_RecordID i, String line) throws Exception {");
-        pw.println(getIndent(2) + "super(i);");
-        pw.println(getIndent(2) + "s = line.split(\"\\t\");");
-        for (int j = 0; j < headers[w].length; j++) {
-            pw.println(getIndent(2) + "init" + headers[w][j] + "(s[" + j + "]);");
-        }
-        pw.println(getIndent(1) + "}");
-        //printGetID(pw);
-        pw.println("}");
-    }
-
 }

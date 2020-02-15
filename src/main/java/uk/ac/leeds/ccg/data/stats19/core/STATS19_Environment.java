@@ -26,8 +26,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.generic.memory.Generic_MemoryManager;
 
 /**
- * STATS19_Environment
- * 
+ *
  * @author Andy Turner
  * @version 1.0.0
  */
@@ -49,7 +48,7 @@ public class STATS19_Environment extends Generic_MemoryManager {
         //Memory_Threshold = 3000000000L;
         this.de = de;
         this.env = de.env;
-        Path dir = Paths.get(de.files.getDataDir().toString());
+        Path dir = Paths.get(de.files.getDataDir().toString(), STATS19_Strings.s_STATS19);
         files = new STATS19_Files(dir);
 //        Path f  = files.getEnvDataFile();
 //        if (f.exists()) {
