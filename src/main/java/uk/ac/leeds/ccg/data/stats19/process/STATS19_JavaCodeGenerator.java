@@ -32,6 +32,7 @@ import uk.ac.leeds.ccg.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.data.stats19.core.STATS19_Environment;
 import uk.ac.leeds.ccg.data.stats19.core.STATS19_Strings;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.generic.lang.Generic_String;
 
 /**
  * This class produces source code for loading STATS19 data. Source code classes
@@ -126,8 +127,8 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
         Files.createDirectories(outdir);
         String packageName = "uk.ac.leeds.ccg.data.stats19.data." + type;
         String prepend = "STATS19";
-        type = type.toUpperCase();
-        String className = prepend + "_" + type + "_Record";
+        String className = prepend + "_" + Generic_String.getCapitalFirstLetter(
+                type) + "_Record";
         Path fout = Paths.get(outdir.toString(), className + ".java");
         ArrayList<String> imports = new ArrayList<>();
         imports.add("uk.ac.leeds.ccg.data.Data_Record");
