@@ -121,9 +121,9 @@ public class STATS19_JavaCodeGenerator extends CG_Process {
     }
 
     public void run(String type, Data_VariableNamesAndTypes vnt) throws IOException {
-        Path outdir = Paths.get(System.getProperty("user.dir"), "src", "main",
-                 "java", "uk", "ac", "leeds", "ccg", "data", "stats19", "data");
-        outdir = Paths.get(outdir.toString(), type);
+        Path outdir = Paths.get(se.files.getOutputDir().toString(), "src",
+                "main", "java", "uk", "ac", "leeds", "ccg", "data", "stats19", 
+                "data", type);
         Files.createDirectories(outdir);
         String packageName = "uk.ac.leeds.ccg.data.stats19.data." + type;
         String prepend = "STATS19";
